@@ -1,4 +1,4 @@
-export interface ReqBody{
-    username: string;
-    password: string
+export interface ReqBody {
+  username: string;
+  password: string;
 }
