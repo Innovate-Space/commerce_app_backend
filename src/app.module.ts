@@ -6,6 +6,7 @@ import { AuthModule } from './feature/auth/auth.module';
 import { CartModule } from './feature/cart/cart.module';
 import { UserModule } from './feature/user/user.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
     AuthModule,
     CartModule,
     UserModule,
+    PrismaModule,
   ],
   providers: [
     {
