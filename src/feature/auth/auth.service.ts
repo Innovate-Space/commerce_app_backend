@@ -1,15 +1,22 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ReqBody } from 'src/core/auth.dto';
 import * as fs from 'fs';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { User } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
+import * as argon2 from 'argon2';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly prismaService: PrismaService,
   ) {}
   authenticateUser(dto: ReqBody) {
     const data = fs.readFileSync(
@@ -40,6 +47,22 @@ export class AuthService {
         },
         { secret: this.configService.get('ACCESS_JWT') },
       ),
+    };
+  }
+
+  async createAccount(dto: User) {
+    const user = await this.prismaService.user.findFirst({
+      where: { email: dto.email },
+    });
+
+    if (user) {
+      throw new ForbiddenException('Email is already taken');
+    }
+    const hashedPassword = await argon2.hash(dto.password);
+    // await this.prismaService.user.create()
+    return {
+      rawPassword: dto.password,
+      hashedPassword: hashedPassword,
     };
   }
 }

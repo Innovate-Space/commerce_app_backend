@@ -22,6 +22,6 @@ export class AuthController {
 
   @Post('create-account')
   createAccount(@Body() dto: User) {
-    return dto;
+    return this.authService.createAccount(dto);
   }
 }
