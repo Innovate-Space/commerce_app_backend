@@ -1,10 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { ReqBody } from 'src/core/auth.dto';
-import * as fs from 'fs';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { User } from '@prisma/client';
@@ -18,20 +12,33 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly prismaService: PrismaService,
   ) {}
-  authenticateUser(dto: ReqBody) {
-    const data = fs.readFileSync(
-      __dirname + '/../../../src/feature/auth/model/users.json',
-      'utf8',
-    );
-    const users: User[] = JSON.parse(data);
-    const currentUser = users.find(
-      (u) => u.username === dto.username && u.password === dto.password,
-    );
-    if (!currentUser)
-      throw new UnauthorizedException('Email or pssword is wrong sucker');
 
-    delete currentUser.password;
-    return currentUser;
+  async authenticateUser(dto: User) {
+    const user = await this.prismaService.user.findFirst({
+      where: {
+        email: dto.email,
+      },
+    });
+    console.log(dto.email);
+    if (!user) throw new ForbiddenException('Email is incorrect');
+    if (!(await argon2.verify(user.password, dto.password)))
+      throw new ForbiddenException('password is incorrect');
+
+    return user;
+
+    // const data = fs.readFileSync(
+    //   __dirname + '/../../../src/feature/auth/model/users.json',
+    //   'utf8',
+    // );
+    // const users: User[] = JSON.parse(data);
+    // const currentUser = users.find(
+    //   (u) => u.username === dto.username && u.password === dto.password,
+    // );
+    // if (!currentUser)
+    //   throw new UnauthorizedException('Email or pssword is wrong sucker');
+
+    // delete currentUser.password;
+    // return currentUser;
   }
 
   handleLogin(user: User) {
@@ -59,10 +66,18 @@ export class AuthService {
       throw new ForbiddenException('Email is already taken');
     }
     const hashedPassword = await argon2.hash(dto.password);
-    // await this.prismaService.user.create()
+    const info = await this.prismaService.user.create({
+      data: {
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        password: hashedPassword,
+        email: dto.email,
+        username: dto.username,
+      },
+    });
     return {
-      rawPassword: dto.password,
-      hashedPassword: hashedPassword,
+      message: 'Your account has been created successfully',
+      id: info.id,
     };
   }
 }
