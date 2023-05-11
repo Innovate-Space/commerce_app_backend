@@ -19,7 +19,6 @@ export class AuthService {
         email: dto.email,
       },
     });
-    console.log(dto.email);
     if (!user) throw new ForbiddenException('Email is incorrect');
     if (!(await argon2.verify(user.password, dto.password)))
       throw new ForbiddenException('password is incorrect');
@@ -43,6 +42,8 @@ export class AuthService {
 
   handleLogin(user: User) {
     console.log(user);
+    delete user.password;
+    delete user.id;
     return {
       ...user,
       token: this.jwtService.sign(

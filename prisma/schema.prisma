@@ -19,3 +19,21 @@ model User {
   lastName String?
   isEmailVerified Boolean @default(false)
 }
+
+model Product {
+  id Int @id @default(autoincrement())
+  title String
+  description String
+  price Decimal
+  category String
+  image String
+  rating Rating?
+}
+
+model Rating{
+  id Int @id @default(autoincrement())
+  count Int
+  rate Int
+  productId Int @unique
+  product Product @relation(fields: [productId], references: [id])
+}
