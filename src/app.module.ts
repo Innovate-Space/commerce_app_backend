@@ -7,6 +7,7 @@ import { CartModule } from './feature/cart/cart.module';
 import { UserModule } from './feature/user/user.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { PrismaModule } from './prisma/prisma.module';
+import { JwtAuthGuard } from './feature/auth/core/guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -25,6 +26,10 @@ import { PrismaModule } from './prisma/prisma.module';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
     },
   ],
 })

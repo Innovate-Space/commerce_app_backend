@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { User } from '@prisma/client';
+import { Public } from './core/guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -11,6 +12,7 @@ export class AuthController {
     private readonly config: ConfigService,
   ) {}
 
+  @Public()
   @UseGuards(AuthGuard('local'))
   @Post('login')
   loginUser(@Request() req: any): any {
@@ -20,6 +22,7 @@ export class AuthController {
     return this.authService.handleLogin(user);
   }
 
+  @Public()
   @Post('create-account')
   createAccount(@Body() dto: User) {
     return this.authService.createAccount(dto);

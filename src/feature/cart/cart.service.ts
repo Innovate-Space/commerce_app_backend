@@ -22,7 +22,6 @@ export class CartService {
       where: { id: cart.id },
       data: {
         CartProduct: {
-          //set: [{}],
           create: {
             productId: product.id,
             qty,
