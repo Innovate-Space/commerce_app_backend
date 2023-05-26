@@ -1,18 +1,21 @@
 import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { Product, User } from '@prisma/client';
+import { Request } from 'express';
 
 @Controller('carts')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
   @Post()
-  addProductToCart(@Req() user: User, @Body() product: Product) {
-    this.cartService.addNewProductToCart(product, user, 5);
+  addProductToCart(@Req() req: Request, @Body() product: Product) {
+    const user: User = req.user as User;
+    return this.cartService.addNewProductToCart(product, user, 5);
   }
 
-  @Get('user/:id')
-  getUsersCart(@Param('id') id: number) {
-    return this.cartService.getUserCart(id);
+  @Get()
+  getUsersCart(@Req() req: Request) {
+    const user: User = req.user as User;
+    return this.cartService.getUserCart(user.id);
   }
 }

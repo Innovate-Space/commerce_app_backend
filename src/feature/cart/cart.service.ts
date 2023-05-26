@@ -44,12 +44,25 @@ export class CartService {
   }
 
   getUserCart(id: number) {
-    const rawData = fs.readFileSync(
-      __dirname + '/../../../src/feature/cart/model/cart.json',
-      'utf8',
-    );
-    console.log(id);
-    // fs.writeFileSync('mad.txt', 'Hello world');
-    return JSON.parse(rawData);
+    const cart = this.prisma.cart.findFirst({
+      where: {
+        userId: id,
+      },
+      include: {
+        CartProduct: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+    return cart;
+    // const rawData = fs.readFileSync(
+    //   __dirname + '/../../../src/feature/cart/model/cart.json',
+    //   'utf8',
+    // );
+    // // console.log(id);
+    // // fs.writeFileSync('mad.txt', 'Hello world');
+    // return JSON.parse(rawData);
   }
 }

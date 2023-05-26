@@ -41,19 +41,18 @@ export class AuthService {
   }
 
   handleLogin(user: User) {
-    console.log(user);
+    //console.log(user);
+    console.log(user.id);
     delete user.password;
-    delete user.id;
+    //delete user.id;
     return {
       ...user,
       token: this.jwtService.sign(
         {
           username: user.username,
-          id: user.id,
-          typeOfChicken: 'Hen and men',
-          ppp: 'Onyeka',
+          sub: user.id,
         },
-        { secret: this.configService.get('ACCESS_JWT') },
+        { secret: this.configService.get('ACCESS_JWT'), expiresIn: '15m' },
       ),
     };
   }

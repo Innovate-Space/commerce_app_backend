@@ -105,7 +105,7 @@ async function seedProducts() {
     ],
   });
 
-  console.log(products, reviews);
+  //console.log(products, reviews);
 }
 main();
 seedProducts();

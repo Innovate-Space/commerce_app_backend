@@ -16,8 +16,8 @@ export class AuthController {
   @UseGuards(AuthGuard('local'))
   @Post('login')
   loginUser(@Request() req: any): any {
-    console.log(req);
-    console.log(this.config.get('DATABASE_URL'));
+    //g(req);
+    //console.log(this.config.get('DATABASE_URL'));
     const user: User = req.user;
     return this.authService.handleLogin(user);
   }
